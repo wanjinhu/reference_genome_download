@@ -1,8 +1,8 @@
 # reference_genome_download
 参考基因组自动化下载方法
 
-使用方法：
-'''
+## 使用方法：
+```
 $python3 genome_web_crawler.py -h
 usage: genome_web_crawler.py [-h] -i INPUT -o OUTPUT
 
@@ -14,4 +14,4 @@ optional arguments:
                         input GCA or GCF num, such as: GCA_001599795.1
   -o OUTPUT, --output OUTPUT
                         output dir
-'''
+```
