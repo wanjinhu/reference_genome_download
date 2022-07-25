@@ -53,10 +53,15 @@ def genome_download(acc_num:str,out_path:str):
     els = driver.find_element_by_xpath('//*[@id="dl_assembly_gbrs"]')
     time.sleep(2)
     options = Select(els).options
-    # 切换数据库为GenBank【0,GenBank; 1,RefSeq】
-    # 这里写的只针对了GCA genbank的基因组，后续再完善
-    Select(els).select_by_index("0")
-    now_option = Select(els).first_selected_option
+    # 切换数据库为GenBank或者RefSeq【0,GenBank; 1,RefSeq】
+    if acc_num.startswith("GCA"):
+        Select(els).select_by_index("0")
+        now_option = Select(els).first_selected_option
+    elif acc_num.startswith("GCF"):
+        Select(els).select_by_index("1")
+        now_option = Select(els).first_selected_option
+    else:
+        print("ERRO: 输入的参考基因组编号不对，检查一下")
     time.sleep(3)
     print("Now you changed source database to {}".format(now_option.text))
     driver.find_element_by_xpath('//*[@id="dl_assembly_download"]').click()
@@ -65,49 +70,12 @@ def genome_download(acc_num:str,out_path:str):
         driver.close()
         os.system("tar -xvf {}/genome_assemblies_genome_fasta.tar.crdownload".format(abs_path))
         os.system("cp ncbi-genomes*/*.fna.gz {}".format(abs_path))
+        print("\n------------------------------------------------------------------")
         print("check the genome in {}".format(abs_path))
+        print("------------------------------------------------------------------\n")
     else:
         driver.close()
-        print("download failed")
+        print("Unexpected download failed, maybe you can try again!")
 
 if __name__ == '__main__':
     genome_download(args.input,args.output)
-
-## ---------------------------------------------------
-## 单个基因组GCA_001599795.1 写程序测试用的
-## ---------------------------------------------------
-# chrome中加入配置参数，处理连接不是私密连接的网站(https ssl 证书)；不加载图片等问题
-# options = webdriver.ChromeOptions()
-# options.add_argument('--ignore-certificate-errors')
-# # options.add_experimental_option('prefs', {'profile.managed_default_content_settings.images': 2})
-# options.add_argument('--no-sandbox')
-# options.add_argument('--disable-dev-shm-usage')
-# options.add_argument('--headless')
-# options.add_argument('blink-settings=imagesEnabled=false')
-# options.add_argument('--disable-gpu')
-
-# prefs = {'profile.default_content_settings.popups': 0, \
-#          'profile.managed_default_content_settings.images': 2, \
-#          'download.default_directory': args.output
-#          }
-# options.add_experimental_option('prefs', prefs)
-# driver = webdriver.Chrome(chrome_options=options)
-# driver.get('https://www.ncbi.nlm.nih.gov/assembly/GCA_001599795.1/')
-# time.sleep(2)
-# driver.find_element_by_xpath('//*[@id="download-asm"]').click()
-# time.sleep(2)
-# els = driver.find_element_by_xpath('//*[@id="dl_assembly_gbrs"]')
-# time.sleep(2)
-# options = Select(els).options
-# # 切换数据库为GenBank【0,GenBank; 1,RefSeq】
-# Select(els).select_by_index("0")
-# now_option = Select(els).first_selected_option
-# time.sleep(3)
-# print("Now you changed source database to {}".format(now_option.text))
-# driver.find_element_by_xpath('//*[@id="dl_assembly_download"]').click()
-# time.sleep(5)
-# file_name = "genome_assemblies_genome_fasta.tar.crdownload"
-# if os.path.exists(file_name):
-#     os.system("tar -xvf genome_assemblies_genome_fasta.tar.crdownload")
-#     driver.close()
-# os.system("cp ncbi-genomes*/*.fna.gz ../")
