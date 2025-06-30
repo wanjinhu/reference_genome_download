@@ -37,3 +37,8 @@ optional arguments:
                         output dir
 
 ```
+
+## **3. datasets 下载**
+```
+datasets download genome accession --inputfile list --include genome --filename genome.zip
+```
